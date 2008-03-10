@@ -1,0 +1,11 @@
+<?xml version='1.0'?>
+<volitytokens>
+  <token>
+    <key>seat1</key>
+    <value>seat1</value>
+  </token>
+  <token>
+    <key>seat2</key>
+    <value>seat2</value>
+  </token>
+</volitytokens>
