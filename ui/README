@@ -1,0 +1,36 @@
+This is the Pylon Volity SVG/ECMAScript user interface module.
+Copyright 2008 Doug Orleans.  This program is distributed under the
+terms of the GNU Affero General Public License.  See the file COPYING
+for details.
+
+
+Contents:
+
+README -- this file
+COPYING -- the GNU Affero General Public License
+main.svg -- main SVG document
+main.js -- supporting ECMAScript code
+locale/en/gametokens.xml -- English translations for game tokens
+locale/en/seattokens.xml -- English translations for seat tokens
+
+These files are packaged as a zip file for use as a Volity UI module.
+You can recreate this zip file with the following command:
+
+zip -r ui.zip README COPYING main.svg main.js locale
+
+This UI module has been tested with Volity Gamut 0.4.1.  By default,
+when Gamut connects to a Pylon game table, it will download the UI
+module from the location registered with the Volity bookkeeper, but
+you can have it load your local copy if you prefer.  Use the "Game" ->
+"Select New Interface..." menu option to bring up the UI selection
+dialog, and click the "Select File..." or "Enter URL..." buttons.  See
+the Volity home page for more information: http://volity.net/
+
+This UI module supports the basic Pylon ruleset:
+http://steak.place.org/games/pylon/ruleset.html
+
+This UI module supports to the SVG client type:
+http://volity.org/protocol/ui/svg
+
+The source code for Volity Pylon is available at the Google Code
+project page: http://code.google.com/p/pylon-game/
