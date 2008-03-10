@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  title="Pylon"
+  viewBox="-0.5 -0.5 10 6" preserveAspectRatio="xMidYMid">
+
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"
+	    xmlns:vo="http://volity.org/protocol/metadata">
+    <dc:title>Pylon</dc:title>
+    <dc:creator>Doug Orleans</dc:creator>
+    <dc:created>2007-09-06</dc:created>
+    <dc:modified>2008-03-10</dc:modified>
+    <dc:language>en</dc:language>
+    <dc:description>
+      A 2-player strategy game of placement and stacking.
+    </dc:description>
+    <vo:version>1</vo:version>
+    <vo:ruleset>http://steak.place.org/games/pylon/ruleset.html</vo:ruleset>
+    <vo:description-url>http://icehousegames.org/wiki/index.php?title=Pylon</vo:description-url>
+    <vo:seat-color>seat1 #FF0000</vo:seat-color> <!-- red !-->
+    <vo:seat-color>seat2 #00BFFF</vo:seat-color> <!-- deepskyblue !-->
+  </metadata>
+
+  <script xlink:href="main.js" />
+
+  <!-- The BackDrop is needed to catch onmousemove events when the mouse
+       is not over any other element. !-->
+  <rect id="BackDrop" x="-10%" y="-10%" width="110%" height="110%" fill="none"
+    pointer-events="all" />
+
+</svg>

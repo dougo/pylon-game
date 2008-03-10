@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<volitytokens>
+  <token>
+    <key>invalidStack</key>
+    <value>The bottom pyramid of the top stack is larger than the top pyramid of the bottom stack.</value>
+  </token>
+</volitytokens>
