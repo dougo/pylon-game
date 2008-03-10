@@ -1,3 +1,8 @@
+# pylon.py -- Pylon game module for the Python Volity framework.
+# Copyright 2008 Doug Orleans.  This program is distributed under the
+# terms of the GNU Affero General Public License.  See the file
+# COPYING for details.
+
 import volity.game
 import itertools
 import random

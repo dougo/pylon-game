@@ -1,0 +1,36 @@
+This is the Pylon game module for the Python Volity framework.
+Copyright 2008 Doug Orleans.  This program is distributed under the
+terms of the GNU Affero General Public License.  See the file COPYING
+for details.
+
+
+Contents:
+
+README -- this file
+COPYING -- the GNU Affero General Public License
+pylon.py -- main game module
+
+This game module has been tested with the most recent volityd.py as of
+2008-03-10.  You should run volity.py with the following configuration options:
+
+game: pylon.Game
+bot: pylon.RandomBot
+admin: webadmin@volity.net
+restart-script: volityd.py
+
+You'll also need to supply values for jid, password, contact-jid, and
+contact-email.  You can put all of these options in the file "config"
+and run the parlor as follows:
+
+volityd.py --config config
+
+Make sure both volityd.py and pylon.py are on your PYTHONPATH.
+
+This game module supports the basic Pylon ruleset:
+http://steak.place.org/games/pylon/ruleset.html
+
+This game module includes a bot that supports the Random Pylon Bot algorithm:
+http://steak.place.org/games/pylon/random.html
+
+The source code for Volity Pylon is available at the Google Code
+project page: http://code.google.com/p/pylon-game/

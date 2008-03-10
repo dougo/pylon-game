@@ -1,4 +1,9 @@
-// Pylon GUI for Volity.
+/*
+main.js -- ECMAScript code for the Pylon Volity SVG UI module.
+Copyright 2008 Doug Orleans.  This program is distributed under the
+terms of the GNU Affero General Public License.  See the file COPYING
+for details.
+*/
 
 
 // Incoming RPCs
