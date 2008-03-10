@@ -12,11 +12,12 @@ main.svg -- main SVG document
 main.js -- supporting ECMAScript code
 locale/en/gametokens.xml -- English translations for game tokens
 locale/en/seattokens.xml -- English translations for seat tokens
+zipfiles -- list of files to include in the zip file
 
 These files are packaged as a zip file for use as a Volity UI module.
 You can recreate this zip file with the following command:
 
-zip -r ui.zip README COPYING main.svg main.js locale
+zip ui.zip -@ < zipfiles
 
 This UI module has been tested with Volity Gamut 0.4.1.  By default,
 when Gamut connects to a Pylon game table, it will download the UI
