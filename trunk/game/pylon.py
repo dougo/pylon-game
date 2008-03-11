@@ -1,8 +1,3 @@
-# pylon.py -- Pylon game module for the Python Volity framework.
-# Copyright 2008 Doug Orleans.  This program is distributed under the
-# terms of the GNU Affero General Public License.  See the file
-# COPYING for details.
-
 import volity.game
 import itertools
 import random
@@ -190,9 +185,9 @@ class RandomBot(volity.bot.Bot):
         self.maybeMove()
 
     def maybeMove(self):
-        myseat = self.game.getownseat()
+        myseat = self.getownseat()
         curSeat = self.game.curSeat
-        if myseat and curseat and myseat.id == curSeat.id:
+        if myseat and curSeat and myseat.id == curSeat.id:
             self.move()
 
     def move(self):
