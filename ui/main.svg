@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
-main.svg -- main SVG document for the Pylon Volity SVG UI module.
+main.svg - main SVG document for the Pylon Volity SVG UI module.
 Copyright 2008 Doug Orleans.  This program is distributed under the
 terms of the GNU Affero General Public License.  See the file COPYING
 for details.
-!-->
+-->
 
 <svg xmlns="http://www.w3.org/2000/svg" version="1.2"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -21,17 +21,17 @@ for details.
     <dc:description>
       A 2-player strategy game of placement and stacking.
     </dc:description>
-    <vo:version>1</vo:version>
+    <vo:version>2</vo:version>
     <vo:ruleset>http://steak.place.org/games/pylon/ruleset.html</vo:ruleset>
     <vo:description-url>http://icehousegames.org/wiki/index.php?title=Pylon</vo:description-url>
-    <vo:seat-color>seat1 #FF0000</vo:seat-color> <!-- red !-->
-    <vo:seat-color>seat2 #00BFFF</vo:seat-color> <!-- deepskyblue !-->
+    <vo:seat-color>seat1 #FF0000</vo:seat-color> <!-- red -->
+    <vo:seat-color>seat2 #00BFFF</vo:seat-color> <!-- deepskyblue -->
   </metadata>
 
   <script xlink:href="main.js" />
 
   <!-- The BackDrop is needed to catch onmousemove events when the mouse
-       is not over any other element. !-->
+       is not over any other element. -->
   <rect id="BackDrop" x="-10%" y="-10%" width="110%" height="110%" fill="none"
     pointer-events="all" />
 

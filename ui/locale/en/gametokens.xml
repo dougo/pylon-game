@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
-locale/en/gametokens.xml -- English translations for game tokens.
+locale/en/gametokens.xml - English translations for game tokens.
 Copyright 2008 Doug Orleans.  This program is distributed under the
 terms of the GNU Affero General Public License.  See the file COPYING
 for details.
-!-->
+-->
 <volitytokens>
   <token>
     <key>invalidStack</key>
