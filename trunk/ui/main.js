@@ -21,15 +21,11 @@ volity.state_sent = function() {
   }
 };
 
-suspended = false;
-
 volity.suspend_game = function() {
-  suspended = true;
   updateMessage();
 };
 
 volity.resume_game = function() {
-  suspended = false;
   displayState();
 };
 
@@ -373,8 +369,10 @@ function setMessage(msg) {
 }
 
 function updateMessage() {
-  if (suspended)
-    setMessage("Table is suspended.");
+  if (info.state == "setup")
+    setMessage("Pylon");
+  else if (info.state == "suspended")
+    setMessage("Game is suspended.");
   else if (winners)
     setMessage("Game over.");
   else if (whoseTurn != info.seat)
