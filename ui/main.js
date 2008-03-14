@@ -31,33 +31,31 @@ volity.resume_game = function() {
 
 volity.end_game = function() {
   setWinners();
-  whoseTurn = null;
+  curSeat = null;
   if (!receivingState)
     displayState();
 };
 
 
 
-game.start = function(seat) {
-  initState();
-  whoseTurn = seat;
+game.start = function(seatname) {
+  initState(seatname);
   if (!receivingState)
     displayState();
 };
 
 game.placed = function(size, pos) {
-  var stack = popStack(whoseTurn, size);
+  var stack = popStack(curSeat, size);
   putStack(pos, stack);
-  scores[whoseTurn]++;
-  var pyramids = 0;
-  for (var seat in stashes)
-    for (var size = 0; size < sizes; size++)
-      pyramids += getPyramids(seat, size);
-  // If all stashes are empty, the current player goes again to start
-  // the stacking phase, i.e. only call nextTurn if at least one stash
-  // has pyramids remaining.
-  if (pyramids > 0)
-    nextTurn();
+  curSeat.score++;
+  // If the next seat's stash is empty, the current seat goes again to
+  // start the stacking phase, i.e. only call endTurn if the next
+  // seat's stash has pyramids of at least one size.
+  for (var size = 0; size < sizes; size++)
+    if (curSeat.next.stash[size] > 0) {
+      endTurn();
+      break;
+    }
   if (!receivingState)
     displayState();
 };
@@ -67,38 +65,48 @@ game.stacked = function(from, to) {
   removeStack(from);
   var bottomStack = getStack(to);
   putStack(to, topStack.concat(bottomStack));
-  scores[bottomStack[0].seat] -= bottomStack.length;
-  scores[topStack[0].seat] += bottomStack.length;
-  nextTurn();
+  bottomStack[0].seat.score -= bottomStack.length;
+  topStack[0].seat.score += bottomStack.length;
+  endTurn();
   if (!receivingState)
     displayState();
 };
 
 
 sizes = 3;
+stashsize = 5;
 
 rows = 5;
 cols = 6;
 
 board = null;
-stashes = null;
-
-whoseTurn = null;
-scores = null;
+seats = null;
+curSeat = null;
 winners = null;
 
-function initState() {
+// TO DO: make this configurable
+// Note that these colors are also hardcoded in the SVG metadata.  :(
+colors = ["red", "deepskyblue"];
+
+function initState(startSeatName) {
   board = {};
-  // TO DO: generate these
-  stashes = {seat1: [5, 5, 5], seat2: [5, 5, 5]};
-  scores = {seat1: 0, seat2: 0};
-  whoseTurn = null;
+  seats = info.gameseats;
+  for (var i = 0; i < seats.length; i++) {
+    var seat = seats[i];
+    seat.stash = new Array(sizes);
+    for (var size = 0; size < sizes; size++)
+      seat.stash[size] = stashsize;
+    seat.score = 0;
+    seat.color = colors[i];
+    seat.next = seats[(i+1) % seats.length];
+    if (seat == startSeatName) curSeat = seat;
+  }
   winners = null;
 }
 
 
-function nextTurn() {
-  whoseTurn = (whoseTurn == "seat1" ? "seat2" : "seat1");
+function endTurn() {
+  curSeat = curSeat.next;
 }
 
 
@@ -134,24 +142,16 @@ function forEachStack(f) {
 }
 
 
-// Return the number of pyramids of a particular size in a stash.
-function getPyramids(seat, size) {
-  // Seat might be an object, which needs to be explicitly converted
-  // to a string before being used as an associative array key.
-  // TO DO: is this a Gamut bug?  it "==" a string, why not print as a string?
-  return stashes[seat+""][size];
-}
-
 // Remove a pyramid from a stash and return it as a stack.
 function popStack(seat, size) {
-  stashes[seat+""][size]--;
+  seat.stash[size]--;
   return [{seat: seat, size: size}];
 }
 
 // The current phase of the game, either "placement" or "stacking".
 function getPhase() {
   for (var size = 0; size < sizes; size++)
-    if (getPyramids(whoseTurn, size) != 0) return "placement";
+    if (curSeat.stash[size] != 0) return "placement";
   return "stacking";
 }
 
@@ -178,21 +178,24 @@ function isValidMove(from, to) {
 function setWinners() {
   winners = [];			// should be {}
   var highScore = 0;
-  for (seat in scores)
-    if (scores[seat] > highScore) {
-      highScore = scores[seat];
+  for (var i = 0; i < seats.length; i++) {
+    var seat = seats[i];
+    if (seat.score > highScore) {
+      highScore = seat.score;
       winners = [];		// should be {}
-      winners[seat] = "win";
-    } else if (scores[seat] == highScore)
-      winners[seat] = "win";
+      // TO DO: why is String needed here?  shouldn't it autoconvert?
+      winners[String(seat)] = "win";
+    } else if (seat.score == highScore)
+      winners[String(seat)] = "win";
+  }
 }
 
 
 // UI (Views)
 
 function displayState() {
-  if (whoseTurn)
-    seatmark(whoseTurn);
+  if (curSeat)
+    seatmark(curSeat);
   else if (winners)
     seatmark(winners);
   else
@@ -250,11 +253,6 @@ for (var c = 0; c < cols; c++) {
 
 
 
-// TO DO: make this configurable
-// Note that these colors are also hardcoded in the SVG metadata.  :(
-colors = {seat1: "red", seat2: "deepskyblue"};
-
-
 function makePyramid(size, parent) {
   var width = 0.3 + (size+1)/6;
   var pyramid = makeSquare(width, parent);
@@ -283,7 +281,7 @@ function makeStackView(stack, parent) {
   var owner = stack[0].seat;
   var height = stack.length;
   var topSize = stack[0].size;
-  makePyramid(topSize, group).setAttribute("fill", colors[owner]);
+  makePyramid(topSize, group).setAttribute("fill", owner.color);
   if (height > 1) {
     var bottomSize = stack[height-1].size;
     if (bottomSize > topSize)
@@ -315,20 +313,21 @@ function drawStashes() {
   hide(stashViews);
   stashViews = makeGroup(svg);
   var y = 0;
-  for (var seat in stashes) {
+  for (var i = 0; i < seats.length; i++) {
+    var seat = seats[i];
     var group = makeGroup(stashViews);
     var x = 0;
     for (var size = 0; size < sizes; size++) {
-      var height = getPyramids(seat, size);
+      var height = seat.stash[size];
       if (height > 0) {
 	var stack = makeGroup(group);
-	makePyramid(size, stack).setAttribute("fill", colors[seat]);
+	makePyramid(size, stack).setAttribute("fill", seat.color);
 	if (height > 1)
 	  makeHeightLabel(height, stack);
 	moveXY(stack, x, 0);
-	stack.setAttribute("onmousedown",
-			   "grabStashStack(evt, \"" +
-			   seat + "\", " + size + ")");
+	if (seat == info.seat)
+	  stack.setAttribute("onmousedown",
+			     "grabStashStack(evt, " + size + ")");
       }
       x++;
     }
@@ -341,14 +340,15 @@ scoreViews = null;
 
 function drawScores() {
   hide(scoreViews);
-  if (whoseTurn && getPhase() == "placement") return;
+  if (curSeat && getPhase() == "placement") return;
   scoreViews = makeGroup(svg);
   var y = 0;
-  for (var seat in scores) {
+  for (var i = 0; i < seats.length; i++) {
+    var seat = seats[i];
     var group = makeGroup(scoreViews);
     var text = document.createElementNS(svgNS, "text");
     text.setAttribute("style", textStyle);
-    text.textContent = seat + ": " + scores[seat];
+    text.textContent = seat + ": " + seat.score;
     group.appendChild(text);
     // TO DO: show color somehow-- background rectangle maybe?
     moveXY(group, cols + 0.2, rows/2 + y*3 - 1.5);
@@ -369,14 +369,14 @@ function setMessage(msg) {
 }
 
 function updateMessage() {
-  if (info.state == "setup")
+  if (winners)
+    setMessage("Game over.");
+  else if (info.state == "setup")
     setMessage("Pylon");
   else if (info.state == "suspended")
     setMessage("Game is suspended.");
-  else if (winners)
-    setMessage("Game over.");
-  else if (whoseTurn != info.seat)
-    setMessage("Waiting for " + whoseTurn + "...");
+  else if (curSeat != info.seat)
+    setMessage("Waiting for " + curSeat + "...");
   else if (getPhase() == "placement")
     setMessage("Place a pyramid.");
   else
@@ -438,20 +438,17 @@ function grabStack(ev) {
 }
 
 function grabBoardStack(ev) {
-  if (info.seat != whoseTurn || getPhase() != "stacking") return;
+  if (info.seat != curSeat || getPhase() != "stacking") return;
   dragObject = ev.currentTarget;
   grabStack(ev);
   var pt = getDragPoint(ev);
   dragFrom = getPosition(pt);
 }
 
-function grabStashStack(ev, seat, size) {
-  if (seat != info.seat ||
-      info.seat != whoseTurn ||
-      getPhase() != "placement" ||
-      getPyramids(seat, size) == 0)
+function grabStashStack(ev, size) {
+  if (info.seat != curSeat)
     return;
-  dragObject = makeStackView([{seat: seat, size: size}], boardView);
+  dragObject = makeStackView([{seat: info.seat, size: size}], boardView);
   grabStack(ev);
   dragStack(ev); // move it to the same location as the stash stack
   dragSize = size;
@@ -485,7 +482,7 @@ function sendMove() {
   // This handles a possible race condition if the user grabs a stack
   // before the previous move has been registered:
   // TO DO: can this happen?  better way to prevent this?
-  // if (whoseTurn != info.seat) return;
+  if (curSeat != info.seat) return;
   if (dragFrom)
     rpc("stack", dragFrom, dragTo);
   else
