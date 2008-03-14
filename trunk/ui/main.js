@@ -8,17 +8,8 @@ for details.
 
 // Incoming RPCs
 
-receivingState = false;
-
-volity.game_has_started = function() {
-  receivingState = true;
-};
-
 volity.state_sent = function() {
-  if (receivingState) {
-    receivingState = false;
-    displayState();
-  }
+  displayState();
 };
 
 volity.suspend_game = function() {
@@ -32,16 +23,12 @@ volity.resume_game = function() {
 volity.end_game = function() {
   setWinners();
   curSeat = null;
-  if (!receivingState)
-    displayState();
+  displayState();
 };
-
-
 
 game.start = function(seatname) {
   initState(seatname);
-  if (!receivingState)
-    displayState();
+  displayState();
 };
 
 game.placed = function(size, pos) {
@@ -56,8 +43,7 @@ game.placed = function(size, pos) {
       endTurn();
       break;
     }
-  if (!receivingState)
-    displayState();
+  displayState();
 };
 
 game.stacked = function(from, to) {
@@ -68,8 +54,7 @@ game.stacked = function(from, to) {
   bottomStack[0].seat.score -= bottomStack.length;
   topStack[0].seat.score += bottomStack.length;
   endTurn();
-  if (!receivingState)
-    displayState();
+  displayState();
 };
 
 
@@ -194,12 +179,15 @@ function setWinners() {
 // UI (Views)
 
 function displayState() {
+  if (info.recovery) return;
   if (curSeat)
     seatmark(curSeat);
   else if (winners)
     seatmark(winners);
-  else
+  else {
     seatmark();
+    return;
+  }
   drawBoard();
   drawStashes();
   drawScores();
